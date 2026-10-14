@@ -8,11 +8,6 @@ namespace SystemInfoCollector.Services
     public interface IDialogService
     {
         /// <summary>
-        /// Exibe uma mensagem informativa.
-        /// </summary>
-        void ShowInformation(string message);
-
-        /// <summary>
         /// Exibe uma mensagem de aviso.
         /// </summary>
         void ShowWarning(string message);

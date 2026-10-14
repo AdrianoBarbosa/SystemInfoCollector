@@ -11,9 +11,6 @@ namespace SystemInfoCollector.Services
     public class DialogService : IDialogService
     {
         /// <inheritdoc />
-        public void ShowInformation(string message) => Show(message, MessageBoxImage.Information);
-
-        /// <inheritdoc />
         public void ShowWarning(string message) => Show(message, MessageBoxImage.Warning);
 
         /// <inheritdoc />

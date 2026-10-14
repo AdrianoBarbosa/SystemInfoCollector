@@ -99,13 +99,13 @@ diálogo.
 
 ### Tests for User Story 3
 
-- [ ] T014 [US3] Em `tests/SystemInfoCollector.Tests/MainViewModelTests.cs`: (a) coleta com 1 aviso → `ShowWarning` chamado com a lista e barra `StatusKind.Warning` + `"Coleta concluída com 1 aviso"`; (b) com 2 avisos → `"Coleta concluída com 2 avisos"`; (c) falha ao salvar (`IOException`) → `ShowError` com motivo e caminho e barra `StatusKind.Error` + `"Não foi possível salvar os dados."`; (d) falha ao ler (`Load` lançando `IOException` genérica) → `ShowError` com motivo e caminho e barra `StatusKind.Error` + `"Não foi possível ler os dados."` (depende de T011)
+- [x] T014 [US3] Em `tests/SystemInfoCollector.Tests/MainViewModelTests.cs`: (a) coleta com 1 aviso → `ShowWarning` chamado com a lista e barra `StatusKind.Warning` + `"Coleta concluída com 1 aviso"`; (b) com 2 avisos → `"Coleta concluída com 2 avisos"`; (c) falha ao salvar (`IOException`) → `ShowError` com motivo e caminho e barra `StatusKind.Error` + `"Não foi possível salvar os dados."`; (d) falha ao ler (`Load` lançando `IOException` genérica) → `ShowError` com motivo e caminho e barra `StatusKind.Error` + `"Não foi possível ler os dados."` (depende de T011)
 
 ### Implementation for User Story 3
 
-- [ ] T015 [US3] Em `src/SystemInfoCollector/ViewModels/MainViewModel.cs`: coleta com avisos → manter `ShowWarning` com a lista e `SetStatus(Warning, FormatWarningSummary(count))` ("Coleta concluída com 1 aviso" / "Coleta concluída com N avisos"); `ReportSaveFailure` → `SetStatus(Error, "Não foi possível salvar os dados.")` + `ShowError` existente; `ReportReadFailure` → `SetStatus(Error, "Não foi possível ler os dados.")` + `ShowError` existente; textos como constantes (depende de T014)
-- [ ] T016 [US3] Remover `ShowInformation` de `src/SystemInfoCollector/Services/IDialogService.cs`, `src/SystemInfoCollector/Services/DialogService.cs` e `tests/SystemInfoCollector.Tests/Fakes/FakeDialogService.cs` (com a lista `Informations`), conforme [contracts/ui-status-bar.md](contracts/ui-status-bar.md#idialogservice-após-a-feature) (depende de T015)
-- [ ] T017 [US3] Build + testes (0 warnings, 100% passando)
+- [x] T015 [US3] Em `src/SystemInfoCollector/ViewModels/MainViewModel.cs`: coleta com avisos → manter `ShowWarning` com a lista e `SetStatus(Warning, FormatWarningSummary(count))` ("Coleta concluída com 1 aviso" / "Coleta concluída com N avisos"); `ReportSaveFailure` → `SetStatus(Error, "Não foi possível salvar os dados.")` + `ShowError` existente; `ReportReadFailure` → `SetStatus(Error, "Não foi possível ler os dados.")` + `ShowError` existente; textos como constantes (depende de T014)
+- [x] T016 [US3] Remover `ShowInformation` de `src/SystemInfoCollector/Services/IDialogService.cs`, `src/SystemInfoCollector/Services/DialogService.cs` e `tests/SystemInfoCollector.Tests/Fakes/FakeDialogService.cs` (com a lista `Informations`), conforme [contracts/ui-status-bar.md](contracts/ui-status-bar.md#idialogservice-após-a-feature) (depende de T015)
+- [x] T017 [US3] Build + testes (0 warnings, 100% passando)
 
 **Checkpoint**: todas as histórias funcionais
 

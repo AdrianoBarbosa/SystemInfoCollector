@@ -6,15 +6,11 @@ namespace SystemInfoCollector.Tests.Fakes
 {
     internal class FakeDialogService : IDialogService
     {
-        public List<string> Informations { get; } = new List<string>();
-
         public List<string> Warnings { get; } = new List<string>();
 
         public List<string> Errors { get; } = new List<string>();
 
         public List<SystemInfo> ShownData { get; } = new List<SystemInfo>();
-
-        public void ShowInformation(string message) => Informations.Add(message);
 
         public void ShowWarning(string message) => Warnings.Add(message);
 

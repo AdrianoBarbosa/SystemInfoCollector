@@ -15,6 +15,8 @@ namespace SystemInfoCollector.ViewModels
         private const string CollectingMessage = "Coletando dados...";
         private const string FileNotFoundMessage = "O arquivo de dados não existe mais. Colete novamente.";
         private const string CorruptedFileMessage = "O arquivo de dados está corrompido. Colete novamente.";
+        private const string SaveFailedMessage = "Não foi possível salvar os dados.";
+        private const string ReadFailedMessage = "Não foi possível ler os dados.";
 
         private readonly ISystemInfoService _systemInfoService;
         private readonly ISystemInfoRepository _repository;
@@ -113,12 +115,17 @@ namespace SystemInfoCollector.ViewModels
                 var systemInfo = await Task.Run(() => _systemInfoService.Collect());
                 await Task.Run(() => _repository.Save(systemInfo));
 
-                SetStatus(StatusKind.Information, $"Dados salvos em {_repository.FilePath}");
                 if (systemInfo.Warnings.Any())
                 {
+                    // A barra recebe o resumo; a lista completa precisa de espaço e vai para o diálogo.
+                    SetStatus(StatusKind.Warning, FormatWarningSummary(systemInfo.Warnings.Count));
                     _dialogService.ShowWarning(
                         "Coleta concluída com avisos:" + Environment.NewLine
                         + string.Join(Environment.NewLine, systemInfo.Warnings.Select(warning => "• " + warning)));
+                }
+                else
+                {
+                    SetStatus(StatusKind.Information, $"Dados salvos em {_repository.FilePath}");
                 }
             }
             catch (IOException ex)
@@ -177,14 +184,22 @@ namespace SystemInfoCollector.ViewModels
             CanShowData = _repository.Exists();
         }
 
+        private static string FormatWarningSummary(int warningCount)
+        {
+            return warningCount == 1
+                ? "Coleta concluída com 1 aviso"
+                : $"Coleta concluída com {warningCount} avisos";
+        }
+
         private void ReportSaveFailure(Exception exception)
         {
-            StatusMessage = "Não foi possível salvar os dados.";
+            SetStatus(StatusKind.Error, SaveFailedMessage);
             _dialogService.ShowError($"Não foi possível salvar os dados em {_repository.FilePath}: {exception.Message}");
         }
 
         private void ReportReadFailure(Exception exception)
         {
+            SetStatus(StatusKind.Error, ReadFailedMessage);
             _dialogService.ShowError($"Não foi possível ler {_repository.FilePath}: {exception.Message}");
         }
     }

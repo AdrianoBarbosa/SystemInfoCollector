@@ -35,7 +35,22 @@ namespace SystemInfoCollector.Tests
 
             var warning = Assert.Single(_dialogService.Warnings);
             Assert.Contains("Não foi possível coletar processador: acesso negado", warning);
-            Assert.Empty(_dialogService.Informations);
+            Assert.Equal(StatusKind.Warning, viewModel.StatusKind);
+            Assert.Equal("Coleta concluída com 1 aviso", viewModel.StatusMessage);
+        }
+
+        [Fact]
+        public async Task CollectData_WithTwoWarnings_ShowsPluralSummary()
+        {
+            _systemInfoService.Result = new SystemInfo();
+            _systemInfoService.Result.Warnings.Add("Não foi possível coletar processador: acesso negado");
+            _systemInfoService.Result.Warnings.Add("Não foi possível coletar interfaces de rede: acesso negado");
+            var viewModel = CreateViewModel();
+
+            await viewModel.CollectDataCommand.ExecuteAsync();
+
+            Assert.Single(_dialogService.Warnings);
+            Assert.Equal("Coleta concluída com 2 avisos", viewModel.StatusMessage);
         }
 
         [Fact]
@@ -78,7 +93,7 @@ namespace SystemInfoCollector.Tests
         }
 
         [Fact]
-        public async Task CollectData_WhenSaveFails_ShowsErrorWithoutThrowing()
+        public async Task CollectData_WhenSaveFails_ShowsDialogAndErrorStatus()
         {
             _repository.SaveException = new IOException("Disco cheio");
             var viewModel = CreateViewModel();
@@ -88,6 +103,8 @@ namespace SystemInfoCollector.Tests
             var error = Assert.Single(_dialogService.Errors);
             Assert.Contains("Disco cheio", error);
             Assert.Contains(_repository.FilePath, error);
+            Assert.Equal(StatusKind.Error, viewModel.StatusKind);
+            Assert.Equal("Não foi possível salvar os dados.", viewModel.StatusMessage);
         }
 
         [Fact]
@@ -158,6 +175,22 @@ namespace SystemInfoCollector.Tests
         }
 
         [Fact]
+        public void ShowData_WhenReadFails_ShowsDialogAndErrorStatus()
+        {
+            _repository.FileExists = true;
+            _repository.LoadException = new IOException("Arquivo em uso");
+            var viewModel = CreateViewModel();
+
+            viewModel.ShowDataCommand.Execute(null);
+
+            var error = Assert.Single(_dialogService.Errors);
+            Assert.Contains("Arquivo em uso", error);
+            Assert.Contains(_repository.FilePath, error);
+            Assert.Equal(StatusKind.Error, viewModel.StatusKind);
+            Assert.Equal("Não foi possível ler os dados.", viewModel.StatusMessage);
+        }
+
+        [Fact]
         public void ShowData_WhenFileIsValid_ShowsLoadedData()
         {
             _repository.FileExists = true;
@@ -171,7 +204,6 @@ namespace SystemInfoCollector.Tests
 
         private void AssertNoDialog()
         {
-            Assert.Empty(_dialogService.Informations);
             Assert.Empty(_dialogService.Warnings);
             Assert.Empty(_dialogService.Errors);
         }
