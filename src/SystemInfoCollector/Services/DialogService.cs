@@ -1,9 +1,12 @@
 using System.Windows;
+using SystemInfoCollector.Models;
+using SystemInfoCollector.ViewModels;
+using SystemInfoCollector.Views;
 
 namespace SystemInfoCollector.Services
 {
     /// <summary>
-    /// Exibe mensagens ao usuário com caixas de diálogo do WPF.
+    /// Exibe mensagens e janelas ao usuário usando o WPF.
     /// </summary>
     public class DialogService : IDialogService
     {
@@ -15,6 +18,17 @@ namespace SystemInfoCollector.Services
 
         /// <inheritdoc />
         public void ShowError(string message) => Show(message, MessageBoxImage.Error);
+
+        /// <inheritdoc />
+        public void ShowData(SystemInfo systemInfo)
+        {
+            var dataWindow = new DataWindow
+            {
+                Owner = Application.Current?.MainWindow,
+                DataContext = new DataViewModel(systemInfo),
+            };
+            dataWindow.ShowDialog();
+        }
 
         private static void Show(string message, MessageBoxImage image)
         {

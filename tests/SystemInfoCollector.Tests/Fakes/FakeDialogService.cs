@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using SystemInfoCollector.Models;
 using SystemInfoCollector.Services;
 
 namespace SystemInfoCollector.Tests.Fakes
@@ -11,10 +12,14 @@ namespace SystemInfoCollector.Tests.Fakes
 
         public List<string> Errors { get; } = new List<string>();
 
+        public List<SystemInfo> ShownData { get; } = new List<SystemInfo>();
+
         public void ShowInformation(string message) => Informations.Add(message);
 
         public void ShowWarning(string message) => Warnings.Add(message);
 
         public void ShowError(string message) => Errors.Add(message);
+
+        public void ShowData(SystemInfo systemInfo) => ShownData.Add(systemInfo);
     }
 }

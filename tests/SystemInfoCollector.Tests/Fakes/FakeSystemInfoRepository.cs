@@ -16,6 +16,10 @@ namespace SystemInfoCollector.Tests.Fakes
 
         public int SaveCount { get; private set; }
 
+        public SystemInfo LoadResult { get; set; } = new SystemInfo();
+
+        public Exception LoadException { get; set; }
+
         public bool Exists() => FileExists;
 
         public void Save(SystemInfo systemInfo)
@@ -28,6 +32,16 @@ namespace SystemInfoCollector.Tests.Fakes
 
             SavedSystemInfo = systemInfo;
             FileExists = true;
+        }
+
+        public SystemInfo Load()
+        {
+            if (LoadException != null)
+            {
+                throw LoadException;
+            }
+
+            return LoadResult;
         }
     }
 }

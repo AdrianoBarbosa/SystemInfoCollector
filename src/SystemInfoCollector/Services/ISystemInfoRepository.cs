@@ -21,5 +21,12 @@ namespace SystemInfoCollector.Services
         /// Grava a coleta, substituindo o conteúdo anterior.
         /// </summary>
         void Save(SystemInfo systemInfo);
+
+        /// <summary>
+        /// Lê a coleta gravada no arquivo.
+        /// </summary>
+        /// <exception cref="System.IO.FileNotFoundException">O arquivo não existe.</exception>
+        /// <exception cref="System.IO.InvalidDataException">O conteúdo do arquivo é inválido.</exception>
+        SystemInfo Load();
     }
 }

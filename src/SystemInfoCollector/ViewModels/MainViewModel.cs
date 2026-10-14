@@ -11,10 +11,14 @@ namespace SystemInfoCollector.ViewModels
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private const string FileNotFoundMessage = "O arquivo de dados não existe mais. Colete novamente.";
+        private const string CorruptedFileMessage = "O arquivo de dados está corrompido. Colete novamente.";
+
         private readonly ISystemInfoService _systemInfoService;
         private readonly ISystemInfoRepository _repository;
         private readonly IDialogService _dialogService;
         private bool _isBusy;
+        private bool _canShowData;
         private string _statusMessage;
 
         /// <summary>
@@ -27,12 +31,21 @@ namespace SystemInfoCollector.ViewModels
             _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
 
             CollectDataCommand = new AsyncRelayCommand(CollectDataAsync, () => !IsBusy);
+            ShowDataCommand = new RelayCommand(ShowData, () => CanShowData && !IsBusy);
+
+            // Um arquivo gerado em execução anterior já habilita a exibição.
+            RefreshCanShowData();
         }
 
         /// <summary>
         /// Coleta os dados do computador e grava o arquivo.
         /// </summary>
         public AsyncRelayCommand CollectDataCommand { get; }
+
+        /// <summary>
+        /// Lê o arquivo e exibe os dados coletados.
+        /// </summary>
+        public RelayCommand ShowDataCommand { get; }
 
         /// <summary>
         /// Indica que uma coleta está em andamento.
@@ -49,6 +62,22 @@ namespace SystemInfoCollector.ViewModels
                 if (SetProperty(ref _isBusy, value))
                 {
                     CollectDataCommand.RaiseCanExecuteChanged();
+                    ShowDataCommand.RaiseCanExecuteChanged();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indica se o arquivo de dados existe e pode ser exibido.
+        /// </summary>
+        public bool CanShowData
+        {
+            get => _canShowData;
+            private set
+            {
+                if (SetProperty(ref _canShowData, value))
+                {
+                    ShowDataCommand.RaiseCanExecuteChanged();
                 }
             }
         }
@@ -94,13 +123,53 @@ namespace SystemInfoCollector.ViewModels
             finally
             {
                 IsBusy = false;
+                RefreshCanShowData();
             }
+        }
+
+        private void ShowData()
+        {
+            try
+            {
+                _dialogService.ShowData(_repository.Load());
+            }
+            catch (FileNotFoundException)
+            {
+                _dialogService.ShowError(FileNotFoundMessage);
+            }
+            catch (InvalidDataException)
+            {
+                _dialogService.ShowError(CorruptedFileMessage);
+            }
+            catch (IOException ex)
+            {
+                ReportReadFailure(ex);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                ReportReadFailure(ex);
+            }
+            finally
+            {
+                // O arquivo pode ter sido apagado fora da aplicação.
+                RefreshCanShowData();
+            }
+        }
+
+        private void RefreshCanShowData()
+        {
+            CanShowData = _repository.Exists();
         }
 
         private void ReportSaveFailure(Exception exception)
         {
             StatusMessage = "Não foi possível salvar os dados.";
             _dialogService.ShowError($"Não foi possível salvar os dados em {_repository.FilePath}: {exception.Message}");
+        }
+
+        private void ReportReadFailure(Exception exception)
+        {
+            _dialogService.ShowError($"Não foi possível ler {_repository.FilePath}: {exception.Message}");
         }
     }
 }

@@ -23,6 +23,9 @@
     <Button Content="Coletar dados"
             Command="{Binding CollectDataCommand}" />
 
+    <Button Content="Exibir dados"
+            Command="{Binding ShowDataCommand}" />
+
     <ProgressBar IsIndeterminate="True"
                  Height="6"
                  Margin="0,12,0,0"

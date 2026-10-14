@@ -74,6 +74,70 @@ namespace SystemInfoCollector.Tests
             Assert.True(viewModel.CollectDataCommand.CanExecute(null));
         }
 
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void Constructor_SetsCanShowDataFromFileExistence(bool fileExists)
+        {
+            _repository.FileExists = fileExists;
+
+            var viewModel = CreateViewModel();
+
+            Assert.Equal(fileExists, viewModel.CanShowData);
+            Assert.Equal(fileExists, viewModel.ShowDataCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public async Task CollectData_WhenSaved_EnablesShowData()
+        {
+            var viewModel = CreateViewModel();
+            Assert.False(viewModel.CanShowData);
+
+            await viewModel.CollectDataCommand.ExecuteAsync();
+
+            Assert.True(viewModel.CanShowData);
+            Assert.True(viewModel.ShowDataCommand.CanExecute(null));
+        }
+
+        [Fact]
+        public void ShowData_WhenFileWasDeleted_ShowsErrorAndDisablesShowData()
+        {
+            _repository.FileExists = true;
+            var viewModel = CreateViewModel();
+            _repository.FileExists = false;
+            _repository.LoadException = new FileNotFoundException();
+
+            viewModel.ShowDataCommand.Execute(null);
+
+            Assert.Equal("O arquivo de dados não existe mais. Colete novamente.", Assert.Single(_dialogService.Errors));
+            Assert.False(viewModel.CanShowData);
+        }
+
+        [Fact]
+        public void ShowData_WhenFileIsCorrupted_ShowsErrorAndKeepsShowDataEnabled()
+        {
+            _repository.FileExists = true;
+            _repository.LoadException = new InvalidDataException();
+            var viewModel = CreateViewModel();
+
+            viewModel.ShowDataCommand.Execute(null);
+
+            Assert.Equal("O arquivo de dados está corrompido. Colete novamente.", Assert.Single(_dialogService.Errors));
+            Assert.True(viewModel.CanShowData);
+        }
+
+        [Fact]
+        public void ShowData_WhenFileIsValid_ShowsLoadedData()
+        {
+            _repository.FileExists = true;
+            var viewModel = CreateViewModel();
+
+            viewModel.ShowDataCommand.Execute(null);
+
+            Assert.Same(_repository.LoadResult, Assert.Single(_dialogService.ShownData));
+            Assert.Empty(_dialogService.Errors);
+        }
+
         private MainViewModel CreateViewModel()
         {
             return new MainViewModel(_systemInfoService, _repository, _dialogService);

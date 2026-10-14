@@ -1,3 +1,5 @@
+using SystemInfoCollector.Models;
+
 namespace SystemInfoCollector.Services
 {
     /// <summary>
@@ -19,5 +21,10 @@ namespace SystemInfoCollector.Services
         /// Exibe uma mensagem de erro.
         /// </summary>
         void ShowError(string message);
+
+        /// <summary>
+        /// Abre a janela com os dados coletados.
+        /// </summary>
+        void ShowData(SystemInfo systemInfo);
     }
 }

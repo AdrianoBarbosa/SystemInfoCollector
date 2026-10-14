@@ -13,6 +13,7 @@ namespace SystemInfoCollector.Services
     public class SystemInfoRepository : ISystemInfoRepository
     {
         private const string TemporaryFileExtension = ".tmp";
+        private const string CorruptedFileMessage = "O arquivo de dados está corrompido.";
 
         private static readonly Encoding Utf8WithoutBom = new UTF8Encoding(false);
 
@@ -69,6 +70,30 @@ namespace SystemInfoCollector.Services
             {
                 File.Move(temporaryFilePath, FilePath);
             }
+        }
+
+        /// <inheritdoc />
+        public SystemInfo Load()
+        {
+            if (!File.Exists(FilePath))
+            {
+                throw new FileNotFoundException("O arquivo de dados não existe.", FilePath);
+            }
+
+            var json = File.ReadAllText(FilePath, Utf8WithoutBom);
+
+            SystemInfo systemInfo;
+            try
+            {
+                systemInfo = JsonConvert.DeserializeObject<SystemInfo>(json, SerializerSettings);
+            }
+            catch (JsonException ex)
+            {
+                throw new InvalidDataException(CorruptedFileMessage, ex);
+            }
+
+            // Arquivo vazio ou contendo apenas "null".
+            return systemInfo ?? throw new InvalidDataException(CorruptedFileMessage);
         }
     }
 }
