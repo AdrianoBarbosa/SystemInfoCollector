@@ -19,22 +19,7 @@ namespace SystemInfoCollector.Services.Collectors
             "SELECT Name, Description FROM Win32_Processor";
 
         /// <summary>
-        /// Configurações de adaptadores de rede com IP habilitado.
-        /// </summary>
-        /// <remarks>
-        /// <c>Index</c> é a propriedade-chave da classe e precisa permanecer na projeção:
-        /// sem ela o WMI não preenche <c>__PATH</c> e <c>GetRelated</c> deixa de funcionar.
-        /// </remarks>
-        public const string NetworkAdapterConfiguration =
-            "SELECT Index, Description, IPAddress, MACAddress FROM Win32_NetworkAdapterConfiguration WHERE IPEnabled = TRUE";
-
-        /// <summary>
-        /// Classe associada à configuração de rede que contém o nome amigável da conexão.
-        /// </summary>
-        public const string NetworkAdapterClassName = "Win32_NetworkAdapter";
-
-        /// <summary>
-        /// Namespace WMI das classes de rede modernas (<c>MSFT_*</c>), usadas como fonte complementar.
+        /// Namespace WMI das classes de rede <c>MSFT_*</c>.
         /// </summary>
         public const string StandardCimNamespace = @"root\StandardCimv2";
 

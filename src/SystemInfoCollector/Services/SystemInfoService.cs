@@ -17,7 +17,6 @@ namespace SystemInfoCollector.Services
         private readonly ProcessorCollector _processorCollector;
         private readonly NetFrameworkCollector _netFrameworkCollector;
         private readonly NetworkInterfaceCollector _networkInterfaceCollector;
-        private readonly NetAdapterCollector _netAdapterCollector;
 
         /// <summary>
         /// Cria o serviço com os coletores de cada fonte.
@@ -26,14 +25,12 @@ namespace SystemInfoCollector.Services
             OperatingSystemCollector operatingSystemCollector,
             ProcessorCollector processorCollector,
             NetFrameworkCollector netFrameworkCollector,
-            NetworkInterfaceCollector networkInterfaceCollector,
-            NetAdapterCollector netAdapterCollector)
+            NetworkInterfaceCollector networkInterfaceCollector)
         {
             _operatingSystemCollector = operatingSystemCollector ?? throw new ArgumentNullException(nameof(operatingSystemCollector));
             _processorCollector = processorCollector ?? throw new ArgumentNullException(nameof(processorCollector));
             _netFrameworkCollector = netFrameworkCollector ?? throw new ArgumentNullException(nameof(netFrameworkCollector));
             _networkInterfaceCollector = networkInterfaceCollector ?? throw new ArgumentNullException(nameof(networkInterfaceCollector));
-            _netAdapterCollector = netAdapterCollector ?? throw new ArgumentNullException(nameof(netAdapterCollector));
         }
 
         /// <inheritdoc />
@@ -47,18 +44,9 @@ namespace SystemInfoCollector.Services
                 OperatingSystem = TryCollect(_operatingSystemCollector.Collect, "sistema operacional", warnings, new OperatingSystemInfo()),
                 Processors = TryCollect(_processorCollector.Collect, "processador", warnings, new List<ProcessorInfo>()),
                 NetFramework = TryCollect(_netFrameworkCollector.Collect, ".NET Framework", warnings, new NetFrameworkInfo()),
-                NetworkInterfaces = CollectNetworkInterfaces(warnings),
+                NetworkInterfaces = TryCollect(_networkInterfaceCollector.Collect, "interfaces de rede", warnings, new List<NetworkInterfaceInfo>()),
                 Warnings = warnings,
             };
-        }
-
-        // Win32_NetworkAdapterConfiguration é a fonte principal; MSFT_NetAdapter apenas acrescenta
-        // adaptadores que ela não lista (ex.: virtuais do Hyper-V). Cada fonte falha de forma independente.
-        private List<NetworkInterfaceInfo> CollectNetworkInterfaces(List<string> warnings)
-        {
-            var primary = TryCollect(_networkInterfaceCollector.Collect, "interfaces de rede", warnings, new List<NetworkInterfaceInfo>());
-            var complementary = TryCollect(_netAdapterCollector.Collect, "interfaces de rede complementares", warnings, new List<NetworkInterfaceInfo>());
-            return NetworkInterfaceMerger.Merge(primary, complementary);
         }
 
         // Captura apenas as falhas esperadas ao consultar WMI ou registro
