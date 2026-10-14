@@ -200,6 +200,8 @@ batem com o arquivo.
   versões 1.x a 3.5 não são listadas.
 - Interfaces de rede sem nenhum endereço IP configurado (desconectadas ou desativadas) são
   ignoradas.
+- Interfaces de rede ativas que a fonte padrão do Windows não lista (ex.: adaptadores virtuais)
+  são obtidas de uma fonte complementar do próprio Windows, sem duplicar as já coletadas.
 - A interface é em português; não há requisito de internacionalização.
 - As funcionalidades opcionais (User Stories 3 e 4) fazem parte do escopo desta entrega.
 - O código-fonte será publicado em um repositório no GitHub.

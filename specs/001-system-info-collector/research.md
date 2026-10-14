@@ -57,6 +57,25 @@ Cada item abaixo resolve uma decisão técnica em aberto no Technical Context do
   mas o requisito pede explicitamente WMI; segunda consulta e junção manual por `Index`/`DeviceID`
   — equivalente, porém mais código.
 
+## R4.1. Fonte complementar de interfaces de rede
+
+- **Decision**: manter `Win32_NetworkAdapterConfiguration` como fonte **principal** e usar
+  `MSFT_NetAdapter` + `MSFT_NetIPAddress` (namespace `root\StandardCimv2`) como fonte
+  **complementar**, acrescentando somente adaptadores conectados (`MediaConnectState = 1`) que
+  a fonte principal não listou. A identificação de duplicatas usa a descrição do adaptador
+  (`Description` ↔ `InterfaceDescription`) e, na falta dela, o MAC. O MAC é normalizado para
+  `XX:XX:XX:XX:XX:XX` e o índice de zona IPv6 (`%n`) é removido, mantendo o formato da fonte
+  principal.
+- **Rationale**: as classes `Win32_*` não enumeram alguns adaptadores virtuais — validado com o
+  `vEthernet (Default Switch)` do Hyper-V, ausente em `Win32_NetworkAdapter` e em
+  `Win32_NetworkAdapterConfiguration`, mas presente em `MSFT_NetAdapter`. As classes `MSFT_*`
+  continuam sendo WMI e existem desde o Windows 8 / Server 2012, portanto em todo Windows 10+.
+  Cada fonte é coletada isoladamente pelo `TryCollect`: se a complementar falhar, os dados da
+  principal são mantidos e apenas um aviso é registrado. Custo medido: ~0,2 s a mais na coleta.
+- **Alternatives considered**: substituir a fonte principal por `MSFT_*` — mais abrangente, mas
+  se afasta da classe de referência do requisito; manter só `Win32_*` — mais simples, porém
+  omite interfaces ativas visíveis no Windows (SC-003).
+
 ## R5. Versão do .NET Framework pelo registro
 
 - **Decision**: ler o DWORD `Release` em

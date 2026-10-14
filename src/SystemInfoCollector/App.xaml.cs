@@ -36,7 +36,8 @@ namespace SystemInfoCollector
                 new OperatingSystemCollector(),
                 new ProcessorCollector(),
                 new NetFrameworkCollector(),
-                new NetworkInterfaceCollector());
+                new NetworkInterfaceCollector(),
+                new NetAdapterCollector());
             var repository = new SystemInfoRepository(AppPaths.DataFilePath);
             var viewModel = new MainViewModel(systemInfoService, repository, new DialogService());
 

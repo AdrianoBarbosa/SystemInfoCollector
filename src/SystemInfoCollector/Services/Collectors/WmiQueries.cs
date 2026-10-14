@@ -32,5 +32,22 @@ namespace SystemInfoCollector.Services.Collectors
         /// Classe associada à configuração de rede que contém o nome amigável da conexão.
         /// </summary>
         public const string NetworkAdapterClassName = "Win32_NetworkAdapter";
+
+        /// <summary>
+        /// Namespace WMI das classes de rede modernas (<c>MSFT_*</c>), usadas como fonte complementar.
+        /// </summary>
+        public const string StandardCimNamespace = @"root\StandardCimv2";
+
+        /// <summary>
+        /// Adaptadores de rede conectados (<c>MediaConnectState = 1</c>), equivalente aos listados como ativos pelo Windows.
+        /// </summary>
+        public const string ConnectedNetAdapters =
+            "SELECT Name, InterfaceDescription, InterfaceIndex, PermanentAddress FROM MSFT_NetAdapter WHERE MediaConnectState = 1";
+
+        /// <summary>
+        /// Endereços IP de todas as interfaces, associados pelo índice da interface.
+        /// </summary>
+        public const string NetIpAddresses =
+            "SELECT InterfaceIndex, IPAddress FROM MSFT_NetIPAddress";
     }
 }

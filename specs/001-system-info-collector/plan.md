@@ -61,7 +61,7 @@ acima. Nenhuma violação nova.
 | FR-003 | `OperatingSystemCollector` |
 | FR-004 | `ProcessorCollector` |
 | FR-005 | `NetFrameworkCollector` + `NetFrameworkVersionMapper` |
-| FR-006 | `NetworkInterfaceCollector` |
+| FR-006 | `NetworkInterfaceCollector` (principal) + `NetAdapterCollector` (complementar) + `NetworkInterfaceMerger` |
 | FR-007, FR-008 | `SystemInfoRepository` (JSON, gravação atômica) |
 | FR-009, FR-013 | `MainViewModel` + `IDialogService` |
 | FR-010 | `MainViewModel.CanShowData` / `ShowDataCommand.CanExecute` |
@@ -114,7 +114,9 @@ src/SystemInfoCollector/
 │       ├── WmiExtensions.cs          # leitura segura de propriedades
 │       ├── OperatingSystemCollector.cs
 │       ├── ProcessorCollector.cs
-│       ├── NetworkInterfaceCollector.cs
+│       ├── NetworkInterfaceCollector.cs  # Win32_NetworkAdapterConfiguration (principal)
+│       ├── NetAdapterCollector.cs        # MSFT_NetAdapter + MSFT_NetIPAddress (complementar)
+│       ├── NetworkInterfaceMerger.cs     # combina as duas fontes sem duplicatas
 │       ├── NetFrameworkCollector.cs  # registro
 │       └── NetFrameworkVersionMapper.cs
 ├── ViewModels/
@@ -149,3 +151,4 @@ Services, ViewModels, Views) mais um projeto de testes. A separação em várias
 | MVVM (ViewModelBase, RelayCommand, AsyncRelayCommand) | Padrão idiomático do WPF; mantém code-behind vazio e permite testar o estado dos botões | Lógica no code-behind violaria o Princípio III e não seria testável |
 | Interfaces para serviços (`ISystemInfoService`, `ISystemInfoRepository`, `IDialogService`) | Permitem testar `MainViewModel` com dublês | Classes concretas acoplariam testes a WMI, disco e MessageBox |
 | Newtonsoft.Json | Serialização JSON indentada com camelCase em uma linha | `DataContractJsonSerializer` exige atributos em todo modelo e gera datas ilegíveis |
+| Fonte complementar de rede (`MSFT_NetAdapter`) | `Win32_*` não lista adaptadores virtuais ativos (ex.: Hyper-V), violando SC-003 | Usar só `Win32_*` omite interfaces visíveis no Windows; usar só `MSFT_*` se afasta da classe de referência (research R4.1) |

@@ -36,7 +36,7 @@ Remove-Item "$env:LOCALAPPDATA\SystemInfoCollector" -Recurse -ErrorAction Silent
 | 2 | Clicar "Coletar dados" | Progresso aparece, botão de coleta desabilita, termina em ≤ 5 s; status mostra caminho do arquivo; "Exibir dados" habilita | FR-009, FR-012, SC-001 |
 | 3 | Abrir o `system-info.json` no editor | JSON indentado conforme [contracts/system-info-file.md](contracts/system-info-file.md) | FR-008 |
 | 4 | Clicar "Exibir dados" | Janela com seções conforme [contracts/ui-contract.md](contracts/ui-contract.md) e valores iguais ao arquivo | FR-011 |
-| 5 | Conferir com o Windows: `winver`, Configurações > Sistema > Sobre, `ipconfig /all`, Gerenciador de Dispositivos | Valores coincidem | SC-003 |
+| 5 | Conferir com o Windows: `winver`, Configurações > Sistema > Sobre, `ipconfig /all`, `Get-NetAdapter` (interfaces com status Up), Gerenciador de Dispositivos | Valores coincidem | SC-003 |
 | 6 | Conferir .NET: `(Get-ItemProperty 'HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full').Release` | Release igual ao exibido; versão conforme tabela em [research.md](research.md#r5-versão-do-net-framework-pelo-registro) | FR-005 |
 | 7 | Fechar e reabrir o app | "Exibir dados" já habilitado | FR-010, SC-004 |
 | 8 | Com o app aberto, apagar o arquivo e clicar "Exibir dados" | Mensagem amigável; botão desabilita; app não fecha | Edge case, SC-004 |

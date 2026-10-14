@@ -60,6 +60,11 @@ no modelo e no arquivo; a apresentação converte `null` em "Não disponível" (
 **Regras**: somente configurações com `IPEnabled = TRUE`; `IpAddresses` nunca é `null`
 (vazia se ausente).
 
+**Fonte complementar** (research R4.1): adaptadores conectados que não constam acima são
+acrescentados a partir de `MSFT_NetAdapter` (`Name` → `Name`, `InterfaceDescription` →
+`Description`, `PermanentAddress` → `MacAddress` formatado com `:`) e `MSFT_NetIPAddress`
+(`IPAddress`, sem o índice de zona IPv6). Somente adaptadores com ao menos um IP são incluídos.
+
 ## Relacionamentos
 
 ```text
