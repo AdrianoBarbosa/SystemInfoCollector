@@ -11,6 +11,11 @@ namespace SystemInfoCollector.Services.Collectors
     /// </summary>
     public class NetworkInterfaceCollector
     {
+        private const string DescriptionProperty = "Description";
+        private const string IpAddressProperty = "IPAddress";
+        private const string MacAddressProperty = "MACAddress";
+        private const string ConnectionNameProperty = "NetConnectionID";
+
         /// <summary>
         /// Consulta o WMI e retorna uma entrada por interface com IP habilitado.
         /// </summary>
@@ -25,13 +30,13 @@ namespace SystemInfoCollector.Services.Collectors
                 {
                     using (configuration)
                     {
-                        var description = configuration.GetString("Description");
+                        var description = configuration.GetString(DescriptionProperty);
                         networkInterfaces.Add(new NetworkInterfaceInfo
                         {
                             Name = GetConnectionName(configuration) ?? description,
                             Description = description,
-                            IpAddresses = configuration.GetStringArray("IPAddress").ToList(),
-                            MacAddress = configuration.GetString("MACAddress"),
+                            IpAddresses = configuration.GetStringArray(IpAddressProperty).ToList(),
+                            MacAddress = configuration.GetString(MacAddressProperty),
                         });
                     }
                 }
@@ -50,7 +55,7 @@ namespace SystemInfoCollector.Services.Collectors
                 {
                     using (adapter)
                     {
-                        return adapter.GetString("NetConnectionID");
+                        return adapter.GetString(ConnectionNameProperty);
                     }
                 }
             }

@@ -9,6 +9,9 @@ namespace SystemInfoCollector.Services.Collectors
     /// </summary>
     public class ProcessorCollector
     {
+        private const string NameProperty = "Name";
+        private const string DescriptionProperty = "Description";
+
         /// <summary>
         /// Consulta o WMI e retorna um item por processador físico.
         /// </summary>
@@ -25,8 +28,8 @@ namespace SystemInfoCollector.Services.Collectors
                     {
                         processors.Add(new ProcessorInfo
                         {
-                            Name = processor.GetString("Name"),
-                            Description = processor.GetString("Description"),
+                            Name = processor.GetString(NameProperty),
+                            Description = processor.GetString(DescriptionProperty),
                         });
                     }
                 }
