@@ -190,7 +190,7 @@ contracts/system-info-file.md) e comparar com a janela de exibição (quickstart
 - [x] T052 Executar manualmente os cenários 1–10 de [quickstart.md](quickstart.md) e registrar qualquer divergência (SC-001 a SC-006)
 - [x] T053 Preparar a publicação: confirmar que a raiz contém apenas `src/`, `tests/`, `specs/`, `.specify/`, `SystemInfoCollector.sln`, `README.md`, `.gitignore`, `.editorconfig` (e `.claude/`, ignorado). Se houver qualquer outro arquivo (ex.: textos de requisitos originais), PARAR e pedir ao usuário que o mova para fora da pasta — não citá-lo em nenhum arquivo versionado. Remover o comentário "Sync Impact Report" do topo de `.specify/memory/constitution.md`
 - [x] T054 Inicializar o repositório git na raiz (`git init -b main`), criar a branch `001-system-info-collector`, conferir com `git status --ignored` que `bin/`, `obj/`, `.vs/` e `.claude/` estão ignorados, e fazer commits descritivos agrupados (ex.: especificação; estrutura da solução; coleta e gravação; exibição; interfaces de rede; testes e README), fazendo merge na `main` ao final (depende de T053)
-- [ ] T055 Publicar no GitHub: com confirmação explícita do usuário (nome e visibilidade do repositório), criar o repositório remoto (`gh repo create <nome> --source . --push` ou remoto criado pelo usuário + `git push -u origin main`) e informar a URL ao usuário (depende de T054; constituição, Princípio II)
+- [x] T055 Publicar no GitHub: com confirmação explícita do usuário (nome e visibilidade do repositório), criar o repositório remoto (`gh repo create <nome> --source . --push` ou remoto criado pelo usuário + `git push -u origin main`) e informar a URL ao usuário (depende de T054; constituição, Princípio II)
 
 ---
 
