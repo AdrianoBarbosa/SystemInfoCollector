@@ -151,6 +151,10 @@ janela de dados.
 - [x] T044 [US3] Atualizar `src/SystemInfoCollector/ViewModels/DataViewModel.cs` com `IReadOnlyList<NetworkInterfaceInfo> NetworkInterfaces` e `bool HasNetworkInterfaces`
 - [x] T045 [US3] Adicionar `GroupBox` "Interfaces de Rede" em `src/SystemInfoCollector/Views/DataWindow.xaml` (antes de "Avisos"): `ItemsControl` com Nome, Descrição, IP(s) (um por linha via `ItemsControl` aninhado) e MAC (com `NullToNotAvailableConverter`), separados por `Separator`; `TextBlock` "Nenhuma interface encontrada" visível quando `HasNetworkInterfaces` for `false` (depende de T044)
 
+- [x] T056 [US3] Criar `src/SystemInfoCollector/Services/Collectors/NetAdapterCollector.cs` como fonte complementar (research R4.1): consultas `WmiQueries.ConnectedNetAdapters` (`MSFT_NetAdapter WHERE MediaConnectState = 1`) e `WmiQueries.NetIpAddresses` em `root\StandardCimv2`, junção por `InterfaceIndex`, apenas adaptadores com IP; métodos `internal static` `FormatMacAddress` (`00155D000001` → `00:15:5D:00:00:01`) e `RemoveZoneIndex` (`fe80::1%17` → `fe80::1`)
+- [x] T057 [US3] Criar `src/SystemInfoCollector/Services/Collectors/NetworkInterfaceMerger.cs` (mantém a fonte principal e acrescenta da complementar só o que falta, chave = `Description` ou, na falta, `MacAddress`, sem diferenciar maiúsculas) e usá-lo em `SystemInfoService.CollectNetworkInterfaces`, com cada fonte em seu próprio `TryCollect` ("interfaces de rede" / "interfaces de rede complementares"); registrar `NetAdapterCollector` em `App.xaml.cs` (depende de T056)
+- [x] T058 [P] [US3] Criar `tests/SystemInfoCollector.Tests/NetworkInterfaceMergerTests.cs`: fonte principal preservada e só faltantes acrescentados; principal vazia usa a complementar; duplicata detectada pelo MAC quando não há descrição; `FormatMacAddress` e `RemoveZoneIndex`
+
 **Checkpoint**: US1–US3 funcionais
 
 ---
@@ -179,10 +183,10 @@ contracts/system-info-file.md) e comparar com a janela de exibição (quickstart
 
 **Purpose**: documentação, conformidade com a constituição e validação final
 
-- [ ] T048 [P] Criar `README.md` na raiz (português): objetivo do aplicativo; funcionalidades (dados coletados, arquivo JSON, exibição, interfaces de rede); local do arquivo (`%LocalAppData%\SystemInfoCollector\system-info.json`) com exemplo resumido; pré-requisitos e comandos de build/teste/execução de [quickstart.md](quickstart.md); estrutura de pastas; decisões técnicas resumidas de [research.md](research.md); autor "Adriano Olivares Barbosa". O texto descreve apenas o produto
-- [ ] T049 Revisar todos os arquivos em `src/` e `tests/` contra a constituição: uma classe por arquivo, namespaces = pastas, nomenclatura, `using` em todo `IDisposable`, sem strings mágicas, XML docs em membros públicos, nenhum `catch (Exception)` fora de `App.xaml.cs`, nenhuma lógica de WMI/registro/I/O em code-behind
-- [ ] T050 Executar `dotnet build SystemInfoCollector.sln -c Release` e corrigir até zero warnings e zero erros
-- [ ] T051 Executar `dotnet test SystemInfoCollector.sln -c Release` e garantir 100% dos testes passando
+- [x] T048 [P] Criar `README.md` na raiz (português): objetivo do aplicativo; funcionalidades (dados coletados, arquivo JSON, exibição, interfaces de rede); local do arquivo (`%LocalAppData%\SystemInfoCollector\system-info.json`) com exemplo resumido; pré-requisitos e comandos de build/teste/execução de [quickstart.md](quickstart.md); estrutura de pastas; decisões técnicas resumidas de [research.md](research.md); autor "Adriano Olivares Barbosa". O texto descreve apenas o produto
+- [x] T049 Revisar todos os arquivos em `src/` e `tests/` contra a constituição: uma classe por arquivo, namespaces = pastas, nomenclatura, `using` em todo `IDisposable`, sem strings mágicas, XML docs em membros públicos, nenhum `catch (Exception)` fora de `App.xaml.cs`, nenhuma lógica de WMI/registro/I/O em code-behind
+- [x] T050 Executar `dotnet build SystemInfoCollector.sln -c Release` e corrigir até zero warnings e zero erros
+- [x] T051 Executar `dotnet test SystemInfoCollector.sln -c Release` e garantir 100% dos testes passando
 - [ ] T052 Executar manualmente os cenários 1–10 de [quickstart.md](quickstart.md) e registrar qualquer divergência (SC-001 a SC-006)
 - [ ] T053 Preparar a publicação: confirmar que a raiz contém apenas `src/`, `tests/`, `specs/`, `.specify/`, `SystemInfoCollector.sln`, `README.md`, `.gitignore`, `.editorconfig` (e `.claude/`, ignorado). Se houver qualquer outro arquivo (ex.: textos de requisitos originais), PARAR e pedir ao usuário que o mova para fora da pasta — não citá-lo em nenhum arquivo versionado. Remover o comentário "Sync Impact Report" do topo de `.specify/memory/constitution.md`
 - [ ] T054 Inicializar o repositório git na raiz (`git init -b main`), criar a branch `001-system-info-collector`, conferir com `git status --ignored` que `bin/`, `obj/`, `.vs/` e `.claude/` estão ignorados, e fazer commits descritivos agrupados (ex.: especificação; estrutura da solução; coleta e gravação; exibição; interfaces de rede; testes e README), fazendo merge na `main` ao final (depende de T053)
