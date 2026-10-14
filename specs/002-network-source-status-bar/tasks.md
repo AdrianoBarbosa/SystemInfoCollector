@@ -116,8 +116,8 @@ diálogo.
 - [x] T018 [P] Atualizar `README.md`: na tabela "Dados coletados", linha de rede com fonte `MSFT_NetAdapter` + `MSFT_NetIPAddress` (WMI, `root\StandardCimv2`); substituir a seção "Decisão de projeto: duas fontes WMI..." por "Decisão de projeto: interfaces de rede via MSFT_NetAdapter" explicando por que essa classe WMI foi escolhida em vez de `Win32_NetworkAdapterConfiguration` (lista adaptadores virtuais ativos, ~4x mais rápida, disponível em todo Windows 10+), com link para `specs/002-network-source-status-bar/research.md#r1-fonte-única-de-interfaces-de-rede`; em "Funcionalidades", descrever a barra de status (mensagens curtas com ícone/cor; diálogo só para mensagens com detalhes); atualizar o exemplo de saída se necessário; na estrutura de pastas, mencionar as duas features em `specs/`
 - [x] T019 [P] Em `specs/001-system-info-collector/research.md` (seção R4.1) e `specs/001-system-info-collector/contracts/ui-contract.md` (seção "Mensagens"), acrescentar nota: "Substituído pela feature 002 — ver `specs/002-network-source-status-bar/`"
 - [x] T020 Revisar os arquivos alterados contra a constituição (convenções, constantes, XML docs, ausência de referências a `NetAdapterCollector`/`NetworkInterfaceMerger`/`ShowInformation` em `src/` e `tests/`) e executar build Release + testes finais
-- [ ] T021 Validação manual pelo usuário: cenários R1–R5 e S1–S8 de [quickstart.md](quickstart.md)
-- [ ] T022 Após confirmação do usuário: merge da branch `002-network-source-status-bar` na `main` e push das duas branches para o GitHub (depende de T021)
+- [x] T021 Validação manual pelo usuário: cenários R1–R5 e S1–S8 de [quickstart.md](quickstart.md)
+- [x] T022 Após confirmação do usuário: merge da branch `002-network-source-status-bar` na `main` e push das duas branches para o GitHub (depende de T021)
 
 ---
 
