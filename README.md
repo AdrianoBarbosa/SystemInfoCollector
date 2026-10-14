@@ -6,6 +6,8 @@ dados de forma organizada.
 
 Autor: **Adriano Olivares Barbosa**
 
+> Projeto desenvolvido como avaliação técnica de desenvolvimento C#.
+
 ## Funcionalidades
 
 - **Coletar dados**: consulta o computador em segundo plano (a janela continua responsiva) e grava
