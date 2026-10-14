@@ -11,6 +11,11 @@
 | Status | `TextBlock` | `StatusMessage` | Ex.: "Dados salvos em C:\...\system-info.json" (FR-009) |
 
 **Mensagens (via `IDialogService`)**:
+
+> **Substituído pela feature 002**: mensagens curtas passaram para a barra de status e o diálogo
+> ficou reservado para mensagens com detalhes. Ver
+> [002/contracts/ui-status-bar.md](../../002-network-source-status-bar/contracts/ui-status-bar.md).
+
 - Coleta com avisos (`Warnings` não vazio): aviso listando as fontes que falharam.
 - Falha ao gravar: erro com motivo e caminho.
 - Falha ao ler: ver [system-info-file.md](system-info-file.md).

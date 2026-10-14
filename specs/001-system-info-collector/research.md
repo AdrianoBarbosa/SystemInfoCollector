@@ -59,6 +59,10 @@ Cada item abaixo resolve uma decisão técnica em aberto no Technical Context do
 
 ## R4.1. Fonte complementar de interfaces de rede
 
+> **Substituído pela feature 002**: a coleta de rede passou a usar somente `MSFT_NetAdapter` +
+> `MSFT_NetIPAddress`. Ver
+> [002/research.md](../002-network-source-status-bar/research.md#r1-fonte-única-de-interfaces-de-rede).
+
 - **Decision**: manter `Win32_NetworkAdapterConfiguration` como fonte **principal** e usar
   `MSFT_NetAdapter` + `MSFT_NetIPAddress` (namespace `root\StandardCimv2`) como fonte
   **complementar**, acrescentando somente adaptadores conectados (`MediaConnectState = 1`) que
