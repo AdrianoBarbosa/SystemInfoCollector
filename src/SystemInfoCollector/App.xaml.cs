@@ -1,5 +1,9 @@
 using System.Windows;
 using System.Windows.Threading;
+using SystemInfoCollector.Services;
+using SystemInfoCollector.Services.Collectors;
+using SystemInfoCollector.ViewModels;
+using SystemInfoCollector.Views;
 
 namespace SystemInfoCollector
 {
@@ -19,6 +23,24 @@ namespace SystemInfoCollector
         public App()
         {
             DispatcherUnhandledException += OnDispatcherUnhandledException;
+        }
+
+        /// <summary>
+        /// Monta as dependências e abre a janela principal.
+        /// </summary>
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            var systemInfoService = new SystemInfoService(
+                new OperatingSystemCollector(),
+                new ProcessorCollector(),
+                new NetFrameworkCollector());
+            var repository = new SystemInfoRepository(AppPaths.DataFilePath);
+            var viewModel = new MainViewModel(systemInfoService, repository, new DialogService());
+
+            MainWindow = new MainWindow { DataContext = viewModel };
+            MainWindow.Show();
         }
 
         // Rede de segurança: erros não previstos são informados ao usuário sem encerrar a aplicação.
