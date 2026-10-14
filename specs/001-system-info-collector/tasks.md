@@ -165,11 +165,11 @@ contracts/system-info-file.md) e comparar com a janela de exibição (quickstart
 
 ### Tests for User Story 4
 
-- [ ] T046 [US4] Criar `tests/SystemInfoCollector.Tests/SystemInfoRepositoryTests.cs` (cada teste usa caminho em `Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), "system-info.json")` e apaga o diretório em `Dispose`): (a) ida e volta com `SystemInfo` totalmente preenchido (incluindo duas interfaces e múltiplos IPs) preserva todos os valores; (b) campo string `null` é gravado como `null` e lido como `null`; (c) arquivo gravado não começa com BOM (`EF BB BF`), contém `"operatingSystem"` e `"networkInterfaces"` em camelCase e é indentado com 2 espaços; (d) JSON com `"processors": null` e propriedade desconhecida carrega com lista vazia e sem erro; (e) `Load` sem arquivo lança `FileNotFoundException`; (f) JSON malformado lança `InvalidDataException`; (g) dois `Save` seguidos substituem o conteúdo e não deixam `.tmp`; (h) `Exists()` reflete a presença do arquivo; (i) JSON com `"operatingSystem": null` e `"netFramework": null` carrega com instâncias vazias (não nulas) nessas propriedades
+- [x] T046 [US4] Criar `tests/SystemInfoCollector.Tests/SystemInfoRepositoryTests.cs` (cada teste usa caminho em `Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), "system-info.json")` e apaga o diretório em `Dispose`): (a) ida e volta com `SystemInfo` totalmente preenchido (incluindo duas interfaces e múltiplos IPs) preserva todos os valores; (b) campo string `null` é gravado como `null` e lido como `null`; (c) arquivo gravado não começa com BOM (`EF BB BF`), contém `"operatingSystem"` e `"networkInterfaces"` em camelCase e é indentado com 2 espaços; (d) JSON com `"processors": null` e propriedade desconhecida carrega com lista vazia e sem erro; (e) `Load` sem arquivo lança `FileNotFoundException`; (f) JSON malformado lança `InvalidDataException`; (g) dois `Save` seguidos substituem o conteúdo e não deixam `.tmp`; (h) `Exists()` reflete a presença do arquivo; (i) JSON com `"operatingSystem": null` e `"netFramework": null` carrega com instâncias vazias (não nulas) nessas propriedades
 
 ### Implementation for User Story 4
 
-- [ ] T047 [US4] Ajustar `src/SystemInfoCollector/Services/SystemInfoRepository.cs` e os modelos em `src/SystemInfoCollector/Models/` até todos os testes de T046 passarem, sem mudar o contrato de contracts/system-info-file.md (depende de T046)
+- [x] T047 [US4] Ajustar `src/SystemInfoCollector/Services/SystemInfoRepository.cs` e os modelos em `src/SystemInfoCollector/Models/` até todos os testes de T046 passarem, sem mudar o contrato de contracts/system-info-file.md (depende de T046)
 
 **Checkpoint**: todas as histórias funcionais e o contrato do arquivo coberto por testes
 
