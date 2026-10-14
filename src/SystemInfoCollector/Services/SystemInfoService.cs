@@ -16,6 +16,7 @@ namespace SystemInfoCollector.Services
         private readonly OperatingSystemCollector _operatingSystemCollector;
         private readonly ProcessorCollector _processorCollector;
         private readonly NetFrameworkCollector _netFrameworkCollector;
+        private readonly NetworkInterfaceCollector _networkInterfaceCollector;
 
         /// <summary>
         /// Cria o serviço com os coletores de cada fonte.
@@ -23,11 +24,13 @@ namespace SystemInfoCollector.Services
         public SystemInfoService(
             OperatingSystemCollector operatingSystemCollector,
             ProcessorCollector processorCollector,
-            NetFrameworkCollector netFrameworkCollector)
+            NetFrameworkCollector netFrameworkCollector,
+            NetworkInterfaceCollector networkInterfaceCollector)
         {
             _operatingSystemCollector = operatingSystemCollector ?? throw new ArgumentNullException(nameof(operatingSystemCollector));
             _processorCollector = processorCollector ?? throw new ArgumentNullException(nameof(processorCollector));
             _netFrameworkCollector = netFrameworkCollector ?? throw new ArgumentNullException(nameof(netFrameworkCollector));
+            _networkInterfaceCollector = networkInterfaceCollector ?? throw new ArgumentNullException(nameof(networkInterfaceCollector));
         }
 
         /// <inheritdoc />
@@ -41,6 +44,7 @@ namespace SystemInfoCollector.Services
                 OperatingSystem = TryCollect(_operatingSystemCollector.Collect, "sistema operacional", warnings, new OperatingSystemInfo()),
                 Processors = TryCollect(_processorCollector.Collect, "processador", warnings, new List<ProcessorInfo>()),
                 NetFramework = TryCollect(_netFrameworkCollector.Collect, ".NET Framework", warnings, new NetFrameworkInfo()),
+                NetworkInterfaces = TryCollect(_networkInterfaceCollector.Collect, "interfaces de rede", warnings, new List<NetworkInterfaceInfo>()),
                 Warnings = warnings,
             };
         }

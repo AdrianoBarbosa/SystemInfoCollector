@@ -27,6 +27,7 @@ namespace SystemInfoCollector.ViewModels
             OperatingSystem = systemInfo.OperatingSystem;
             Processors = systemInfo.Processors;
             NetFrameworkText = FormatNetFramework(systemInfo.NetFramework);
+            NetworkInterfaces = systemInfo.NetworkInterfaces;
             Warnings = systemInfo.Warnings;
         }
 
@@ -54,6 +55,16 @@ namespace SystemInfoCollector.ViewModels
         /// Versão do .NET Framework acompanhada do identificador numérico, quando disponível.
         /// </summary>
         public string NetFrameworkText { get; }
+
+        /// <summary>
+        /// Interfaces de rede com IP configurado.
+        /// </summary>
+        public IReadOnlyList<NetworkInterfaceInfo> NetworkInterfaces { get; }
+
+        /// <summary>
+        /// Indica se há ao menos uma interface de rede para exibir.
+        /// </summary>
+        public bool HasNetworkInterfaces => NetworkInterfaces.Count > 0;
 
         /// <summary>
         /// Avisos registrados durante a coleta.

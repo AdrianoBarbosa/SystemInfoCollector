@@ -142,14 +142,14 @@ janela de dados.
 
 ### Tests for User Story 3
 
-- [ ] T041 [P] [US3] Criar `tests/SystemInfoCollector.Tests/DataViewModelTests.cs`: `HasNetworkInterfaces` é `false` com lista vazia e `true` com uma interface; `HasProcessors` é `false` com lista vazia; `NetFrameworkText` inclui "(release 533509)" quando `Release = 533509`; `HasWarnings` reflete `Warnings`
+- [x] T041 [P] [US3] Criar `tests/SystemInfoCollector.Tests/DataViewModelTests.cs`: `HasNetworkInterfaces` é `false` com lista vazia e `true` com uma interface; `HasProcessors` é `false` com lista vazia; `NetFrameworkText` inclui "(release 533509)" quando `Release = 533509`; `HasWarnings` reflete `Warnings`
 
 ### Implementation for User Story 3
 
-- [ ] T042 [P] [US3] Criar `src/SystemInfoCollector/Services/Collectors/NetworkInterfaceCollector.cs`: `List<NetworkInterfaceInfo> Collect()` executa `WmiQueries.NetworkAdapterConfiguration`; para cada `ManagementObject` (em `using`) obtém o adaptador via `GetRelated(WmiQueries.NetworkAdapterClassName)` (coleção e itens em `using`) e lê `NetConnectionID`; monta `NetworkInterfaceInfo` com `Name = NetConnectionID ?? Description`, `Description`, `IpAddresses = GetStringArray("IPAddress").ToList()` e `MacAddress = GetString("MACAddress")`. Regra: "somente configurações com `IPEnabled = TRUE`; `IpAddresses` nunca é `null` (vazia se ausente)"
-- [ ] T043 [US3] Atualizar `src/SystemInfoCollector/Services/SystemInfoService.cs`: receber `NetworkInterfaceCollector` no construtor e preencher `NetworkInterfaces` via `TryCollect` com nome de seção "interfaces de rede" e fallback lista vazia; atualizar a composição em `src/SystemInfoCollector/App.xaml.cs` (depende de T042)
-- [ ] T044 [US3] Atualizar `src/SystemInfoCollector/ViewModels/DataViewModel.cs` com `IReadOnlyList<NetworkInterfaceInfo> NetworkInterfaces` e `bool HasNetworkInterfaces`
-- [ ] T045 [US3] Adicionar `GroupBox` "Interfaces de Rede" em `src/SystemInfoCollector/Views/DataWindow.xaml` (antes de "Avisos"): `ItemsControl` com Nome, Descrição, IP(s) (um por linha via `ItemsControl` aninhado) e MAC (com `NullToNotAvailableConverter`), separados por `Separator`; `TextBlock` "Nenhuma interface encontrada" visível quando `HasNetworkInterfaces` for `false` (depende de T044)
+- [x] T042 [P] [US3] Criar `src/SystemInfoCollector/Services/Collectors/NetworkInterfaceCollector.cs`: `List<NetworkInterfaceInfo> Collect()` executa `WmiQueries.NetworkAdapterConfiguration`; para cada `ManagementObject` (em `using`) obtém o adaptador via `GetRelated(WmiQueries.NetworkAdapterClassName)` (coleção e itens em `using`) e lê `NetConnectionID`; monta `NetworkInterfaceInfo` com `Name = NetConnectionID ?? Description`, `Description`, `IpAddresses = GetStringArray("IPAddress").ToList()` e `MacAddress = GetString("MACAddress")`. Regra: "somente configurações com `IPEnabled = TRUE`; `IpAddresses` nunca é `null` (vazia se ausente)"
+- [x] T043 [US3] Atualizar `src/SystemInfoCollector/Services/SystemInfoService.cs`: receber `NetworkInterfaceCollector` no construtor e preencher `NetworkInterfaces` via `TryCollect` com nome de seção "interfaces de rede" e fallback lista vazia; atualizar a composição em `src/SystemInfoCollector/App.xaml.cs` (depende de T042)
+- [x] T044 [US3] Atualizar `src/SystemInfoCollector/ViewModels/DataViewModel.cs` com `IReadOnlyList<NetworkInterfaceInfo> NetworkInterfaces` e `bool HasNetworkInterfaces`
+- [x] T045 [US3] Adicionar `GroupBox` "Interfaces de Rede" em `src/SystemInfoCollector/Views/DataWindow.xaml` (antes de "Avisos"): `ItemsControl` com Nome, Descrição, IP(s) (um por linha via `ItemsControl` aninhado) e MAC (com `NullToNotAvailableConverter`), separados por `Separator`; `TextBlock` "Nenhuma interface encontrada" visível quando `HasNetworkInterfaces` for `false` (depende de T044)
 
 **Checkpoint**: US1–US3 funcionais
 

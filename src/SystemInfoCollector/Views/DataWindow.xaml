@@ -140,6 +140,66 @@
           </Grid>
         </GroupBox>
 
+        <GroupBox Header="Interfaces de Rede">
+          <StackPanel>
+            <ItemsControl ItemsSource="{Binding NetworkInterfaces}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel>
+                    <Grid Margin="0,0,0,6">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="160" />
+                        <ColumnDefinition Width="*" />
+                      </Grid.ColumnDefinitions>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                      </Grid.RowDefinitions>
+
+                      <TextBlock Grid.Row="0" Text="Nome:" Style="{StaticResource LabelText}" />
+                      <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource ValueText}"
+                               Text="{Binding Name, Mode=OneWay, Converter={StaticResource NullToNotAvailableConverter}}" />
+
+                      <TextBlock Grid.Row="1" Text="Descrição:" Style="{StaticResource LabelText}" />
+                      <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource ValueText}"
+                               Text="{Binding Description, Mode=OneWay, Converter={StaticResource NullToNotAvailableConverter}}" />
+
+                      <TextBlock Grid.Row="2" Text="IP(s):" Style="{StaticResource LabelText}" VerticalAlignment="Top" />
+                      <ItemsControl Grid.Row="2" Grid.Column="1" ItemsSource="{Binding IpAddresses}">
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <TextBox Style="{StaticResource ValueText}" Text="{Binding Mode=OneWay}" />
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+
+                      <TextBlock Grid.Row="3" Text="MAC:" Style="{StaticResource LabelText}" />
+                      <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource ValueText}"
+                               Text="{Binding MacAddress, Mode=OneWay, Converter={StaticResource NullToNotAvailableConverter}}" />
+                    </Grid>
+                    <Separator Margin="0,0,0,6" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="Nenhuma interface encontrada">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Visibility" Value="Collapsed" />
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding HasNetworkInterfaces}" Value="False">
+                      <Setter Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+          </StackPanel>
+        </GroupBox>
+
         <GroupBox Header="Avisos"
                   Visibility="{Binding HasWarnings, Converter={StaticResource BooleanToVisibilityConverter}}">
           <ItemsControl ItemsSource="{Binding Warnings}">
