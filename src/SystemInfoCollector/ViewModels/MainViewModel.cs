@@ -11,6 +11,8 @@ namespace SystemInfoCollector.ViewModels
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private const string ReadyMessage = "Pronto.";
+        private const string CollectingMessage = "Coletando dados...";
         private const string FileNotFoundMessage = "O arquivo de dados não existe mais. Colete novamente.";
         private const string CorruptedFileMessage = "O arquivo de dados está corrompido. Colete novamente.";
 
@@ -20,6 +22,7 @@ namespace SystemInfoCollector.ViewModels
         private bool _isBusy;
         private bool _canShowData;
         private string _statusMessage;
+        private StatusKind _statusKind;
 
         /// <summary>
         /// Cria o ViewModel com os serviços de coleta, persistência e diálogo.
@@ -35,6 +38,7 @@ namespace SystemInfoCollector.ViewModels
 
             // Um arquivo gerado em execução anterior já habilita a exibição.
             RefreshCanShowData();
+            SetStatus(StatusKind.Information, ReadyMessage);
         }
 
         /// <summary>
@@ -83,7 +87,7 @@ namespace SystemInfoCollector.ViewModels
         }
 
         /// <summary>
-        /// Mensagem de status exibida na janela principal.
+        /// Última mensagem exibida na barra de status.
         /// </summary>
         public string StatusMessage
         {
@@ -91,25 +95,30 @@ namespace SystemInfoCollector.ViewModels
             private set => SetProperty(ref _statusMessage, value);
         }
 
+        /// <summary>
+        /// Tipo da última mensagem exibida na barra de status.
+        /// </summary>
+        public StatusKind StatusKind
+        {
+            get => _statusKind;
+            private set => SetProperty(ref _statusKind, value);
+        }
+
         private async Task CollectDataAsync()
         {
             IsBusy = true;
-            StatusMessage = "Coletando dados...";
+            SetStatus(StatusKind.Information, CollectingMessage);
             try
             {
                 var systemInfo = await Task.Run(() => _systemInfoService.Collect());
                 await Task.Run(() => _repository.Save(systemInfo));
 
-                StatusMessage = $"Dados salvos em {_repository.FilePath}";
+                SetStatus(StatusKind.Information, $"Dados salvos em {_repository.FilePath}");
                 if (systemInfo.Warnings.Any())
                 {
                     _dialogService.ShowWarning(
                         "Coleta concluída com avisos:" + Environment.NewLine
                         + string.Join(Environment.NewLine, systemInfo.Warnings.Select(warning => "• " + warning)));
-                }
-                else
-                {
-                    _dialogService.ShowInformation($"Coleta concluída. Dados salvos em {_repository.FilePath}");
                 }
             }
             catch (IOException ex)
@@ -135,11 +144,11 @@ namespace SystemInfoCollector.ViewModels
             }
             catch (FileNotFoundException)
             {
-                _dialogService.ShowError(FileNotFoundMessage);
+                SetStatus(StatusKind.Error, FileNotFoundMessage);
             }
             catch (InvalidDataException)
             {
-                _dialogService.ShowError(CorruptedFileMessage);
+                SetStatus(StatusKind.Error, CorruptedFileMessage);
             }
             catch (IOException ex)
             {
@@ -154,6 +163,13 @@ namespace SystemInfoCollector.ViewModels
                 // O arquivo pode ter sido apagado fora da aplicação.
                 RefreshCanShowData();
             }
+        }
+
+        // Mensagem e tipo mudam sempre juntos: a barra exibe apenas o último evento.
+        private void SetStatus(StatusKind kind, string message)
+        {
+            StatusKind = kind;
+            StatusMessage = message;
         }
 
         private void RefreshCanShowData()

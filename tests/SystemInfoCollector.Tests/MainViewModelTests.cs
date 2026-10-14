@@ -39,15 +39,42 @@ namespace SystemInfoCollector.Tests
         }
 
         [Fact]
-        public async Task CollectData_WithoutWarnings_ShowsInformation()
+        public void Constructor_ShowsReadyStatus()
+        {
+            var viewModel = CreateViewModel();
+
+            Assert.Equal("Pronto.", viewModel.StatusMessage);
+            Assert.Equal(StatusKind.Information, viewModel.StatusKind);
+        }
+
+        [Fact]
+        public async Task CollectData_WhileRunning_ShowsCollectingStatus()
+        {
+            var viewModel = CreateViewModel();
+            string messageDuringCollection = null;
+            var kindDuringCollection = StatusKind.Error;
+            _systemInfoService.OnCollect = () =>
+            {
+                messageDuringCollection = viewModel.StatusMessage;
+                kindDuringCollection = viewModel.StatusKind;
+            };
+
+            await viewModel.CollectDataCommand.ExecuteAsync();
+
+            Assert.Equal("Coletando dados...", messageDuringCollection);
+            Assert.Equal(StatusKind.Information, kindDuringCollection);
+        }
+
+        [Fact]
+        public async Task CollectData_WithoutWarnings_ShowsStatusWithoutDialog()
         {
             var viewModel = CreateViewModel();
 
             await viewModel.CollectDataCommand.ExecuteAsync();
 
-            var information = Assert.Single(_dialogService.Informations);
-            Assert.Contains(_repository.FilePath, information);
-            Assert.Empty(_dialogService.Warnings);
+            Assert.Equal(StatusKind.Information, viewModel.StatusKind);
+            Assert.Contains(_repository.FilePath, viewModel.StatusMessage);
+            AssertNoDialog();
         }
 
         [Fact]
@@ -100,7 +127,7 @@ namespace SystemInfoCollector.Tests
         }
 
         [Fact]
-        public void ShowData_WhenFileWasDeleted_ShowsErrorAndDisablesShowData()
+        public void ShowData_WhenFileWasDeleted_ShowsErrorStatusAndDisablesShowData()
         {
             _repository.FileExists = true;
             var viewModel = CreateViewModel();
@@ -109,12 +136,14 @@ namespace SystemInfoCollector.Tests
 
             viewModel.ShowDataCommand.Execute(null);
 
-            Assert.Equal("O arquivo de dados não existe mais. Colete novamente.", Assert.Single(_dialogService.Errors));
+            Assert.Equal(StatusKind.Error, viewModel.StatusKind);
+            Assert.Equal("O arquivo de dados não existe mais. Colete novamente.", viewModel.StatusMessage);
             Assert.False(viewModel.CanShowData);
+            AssertNoDialog();
         }
 
         [Fact]
-        public void ShowData_WhenFileIsCorrupted_ShowsErrorAndKeepsShowDataEnabled()
+        public void ShowData_WhenFileIsCorrupted_ShowsErrorStatusAndKeepsShowDataEnabled()
         {
             _repository.FileExists = true;
             _repository.LoadException = new InvalidDataException();
@@ -122,8 +151,10 @@ namespace SystemInfoCollector.Tests
 
             viewModel.ShowDataCommand.Execute(null);
 
-            Assert.Equal("O arquivo de dados está corrompido. Colete novamente.", Assert.Single(_dialogService.Errors));
+            Assert.Equal(StatusKind.Error, viewModel.StatusKind);
+            Assert.Equal("O arquivo de dados está corrompido. Colete novamente.", viewModel.StatusMessage);
             Assert.True(viewModel.CanShowData);
+            AssertNoDialog();
         }
 
         [Fact]
@@ -135,6 +166,13 @@ namespace SystemInfoCollector.Tests
             viewModel.ShowDataCommand.Execute(null);
 
             Assert.Same(_repository.LoadResult, Assert.Single(_dialogService.ShownData));
+            Assert.Empty(_dialogService.Errors);
+        }
+
+        private void AssertNoDialog()
+        {
+            Assert.Empty(_dialogService.Informations);
+            Assert.Empty(_dialogService.Warnings);
             Assert.Empty(_dialogService.Errors);
         }
 

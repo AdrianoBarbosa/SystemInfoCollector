@@ -10,8 +10,12 @@ namespace SystemInfoCollector.Tests.Fakes
 
         public Exception ExceptionToThrow { get; set; }
 
+        public Action OnCollect { get; set; }
+
         public SystemInfo Collect()
         {
+            OnCollect?.Invoke();
+
             if (ExceptionToThrow != null)
             {
                 throw ExceptionToThrow;

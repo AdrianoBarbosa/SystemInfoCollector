@@ -1,6 +1,7 @@
 <Window x:Class="SystemInfoCollector.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewModels="clr-namespace:SystemInfoCollector.ViewModels"
         Title="Coletor de Informações do Sistema"
         Width="480"
         SizeToContent="Height"
@@ -8,31 +9,74 @@
         ResizeMode="CanMinimize">
   <Window.Resources>
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <SolidColorBrush x:Key="WarningBrush" Color="#9D5D00" />
+    <SolidColorBrush x:Key="ErrorBrush" Color="#C42B1C" />
+
     <Style TargetType="Button">
       <Setter Property="Height" Value="32" />
       <Setter Property="Margin" Value="0,8,0,0" />
     </Style>
+
+    <!-- Ícone e cor da barra de status conforme o tipo da mensagem (fonte presente em todo Windows 10+). -->
+    <Style x:Key="StatusIcon" TargetType="TextBlock">
+      <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+      <Setter Property="Margin" Value="0,0,6,0" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="Text" Value="&#xE946;" />
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding StatusKind}" Value="{x:Static viewModels:StatusKind.Warning}">
+          <Setter Property="Text" Value="&#xE7BA;" />
+          <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding StatusKind}" Value="{x:Static viewModels:StatusKind.Error}">
+          <Setter Property="Text" Value="&#xEA39;" />
+          <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
+
+    <Style x:Key="StatusText" TargetType="TextBlock">
+      <Setter Property="VerticalAlignment" Value="Center" />
+      <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+      <Style.Triggers>
+        <DataTrigger Binding="{Binding StatusKind}" Value="{x:Static viewModels:StatusKind.Warning}">
+          <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+        </DataTrigger>
+        <DataTrigger Binding="{Binding StatusKind}" Value="{x:Static viewModels:StatusKind.Error}">
+          <Setter Property="Foreground" Value="{StaticResource ErrorBrush}" />
+        </DataTrigger>
+      </Style.Triggers>
+    </Style>
   </Window.Resources>
 
-  <StackPanel Margin="16">
-    <TextBlock Text="Adriano Olivares Barbosa"
-               FontSize="18"
-               FontWeight="SemiBold"
-               Margin="0,0,0,8" />
+  <DockPanel>
+    <StatusBar DockPanel.Dock="Bottom">
+      <StatusBarItem HorizontalContentAlignment="Stretch">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Left" Style="{StaticResource StatusIcon}" />
+          <TextBlock Style="{StaticResource StatusText}"
+                     Text="{Binding StatusMessage}"
+                     ToolTip="{Binding StatusMessage}" />
+        </DockPanel>
+      </StatusBarItem>
+    </StatusBar>
 
-    <Button Content="Coletar dados"
-            Command="{Binding CollectDataCommand}" />
+    <StackPanel Margin="16">
+      <TextBlock Text="Adriano Olivares Barbosa"
+                 FontSize="18"
+                 FontWeight="SemiBold"
+                 Margin="0,0,0,8" />
 
-    <Button Content="Exibir dados"
-            Command="{Binding ShowDataCommand}" />
+      <Button Content="Coletar dados"
+              Command="{Binding CollectDataCommand}" />
 
-    <ProgressBar IsIndeterminate="True"
-                 Height="6"
-                 Margin="0,12,0,0"
-                 Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+      <Button Content="Exibir dados"
+              Command="{Binding ShowDataCommand}" />
 
-    <TextBlock Text="{Binding StatusMessage}"
-               TextWrapping="Wrap"
-               Margin="0,12,0,0" />
-  </StackPanel>
+      <ProgressBar IsIndeterminate="True"
+                   Height="6"
+                   Margin="0,12,0,0"
+                   Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}" />
+    </StackPanel>
+  </DockPanel>
 </Window>
